@@ -1,0 +1,106 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.students-container,
+.teachers-container {
+  margin-left: 40px;
+  margin-right: 40px;
+  padding: 20px;
+  padding-right: 0;
+}
+
+.students-container {
+  background-color: gray;
+}
+
+.students-container h1,
+.teachers-container h1 {
+  color: white;
+}
+
+.students-name-tag {
+  display: flex;
+  flex-wrap: nowrap;  
+  gap: 20px;         
+  overflow-x: auto;     
+  padding-bottom: 10px;   
+  scroll-behavior: smooth; 
+}
+
+.student-name-tag {
+  position: relative;  
+  width: 280px;        
+}
+
+.name-tag {
+  width: 280px;
+  position: relative;
+}
+
+
+.student-info {
+  position: absolute;
+  bottom: 5%;
+  left: 14%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.headshot {
+  width: 150px;
+}
+
+.highlight {
+  max-width: 200px;
+  text-align: center;
+}
+
+.linkedin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.linkedin h5 {
+  margin-bottom: 0;
+  font-weight: 700;
+}
+
+.linkedin img {
+  width: 30px;
+}
+
+
+.teachers-container {
+  background-color: black;
+}
+
+.teacher-headshot {
+  width: 200px;
+}
+
+
+
+.teacher-name-tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 250px;
+
+  border: 1px solid white;
+  border-radius: 10px;
+  background-color: white;
+  padding: 10px;
+  
+}
+
+
+
+.teacher-info {
+  max-width: 200px;
+  text-align: center;
+}

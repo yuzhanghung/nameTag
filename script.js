@@ -2,9 +2,11 @@
 
 // Airtable Data
 
-const traineesUrl = "https://api.airtable.com/v0/appYhupTrQTaKrYSM/Trainees?view=Grid%20view";
+const traineesUrl =
+  "https://api.airtable.com/v0/appYhupTrQTaKrYSM/Trainees?view=Grid%20view";
 
-const programLeaderURL = "https://api.airtable.com/v0/appYhupTrQTaKrYSM/Program%20leaders?view=Grid%20view";
+const programLeaderURL =
+  "https://api.airtable.com/v0/appYhupTrQTaKrYSM/Program%20leaders?view=Grid%20view";
 
 const options = {
   method: "GET",
@@ -13,33 +15,19 @@ const options = {
   },
 };
 
-async function getAllStudentsRecords() {
-  let getResultElement = document.getElementById("js-students-name-tag");
+function addRecordToHTML(record, html) {
+  let name = record.fields["Name"];
+  let info = record.fields["Description"];
+  let openTo = record.fields["OpenTo"];
+  let linkedln = record.fields["Linkedin"];
+  let pic = record.fields["Headshots"]?.[0]?.url || "";
 
-  await fetch(
-    traineesUrl,
-    options
-  )
-    .then((response) => response.json())
-    .then((data) => {
-      
-      getResultElement.innerHTML = "";
-
-      let newHTML = "";
-
-      for (let i = 0; i < data.records.length; i++) {
-        let name = data.records[i].fields["Name"]
-        let info = data.records[i].fields["Description"]
-        let openTo = data.records[i].fields["OpenTo"]
-        let linkedln = data.records[i].fields["Linkedin"]
-        let pic = data.records[i].fields["Headshots"]?.[0]?.url || "";
-
-        newHTML += `
+  html += `
           <div class="student-name-tag">
             <img src="name-tag.png" class="name-tag">
             <div class="student-info">
               <img src="${pic}" class="headshot">
-              <h5 class="student-name">${name}</h5>
+              <h5>${name}</h5>
               <span class="open-to-badge">Open to: ${openTo}</span>
               <p class="highlight">${info}</p>
               <a href="${linkedln}" target="_blank" class="linkedin">
@@ -50,32 +38,43 @@ async function getAllStudentsRecords() {
           </div>
         `;
 
+  return html;
+}
+
+async function getAllStudentsRecords() {
+  let getResultElement = document.getElementById("js-students-name-tag");
+
+  await fetch(traineesUrl, options)
+    .then((response) => response.json())
+    .then((data) => {
+      let newHTML = "";
+      getResultElement.innerHTML = newHTML;
+      const repeat = data.records.length * 2;
+      for (let j = 0; j < repeat; j++) {
+        let i = j % data.records.length;
+        newHTML = addRecordToHTML(data.records[i], newHTML);
       }
       getResultElement.innerHTML = newHTML;
-  });
+    });
+  setTimeout(autoScroll, 1000);
 }
 getAllStudentsRecords();
-
 
 // function for our list view
 async function getAllRecords() {
   let getResultElement = document.getElementById("js-teachers-name-tag");
 
-  await fetch(
-    programLeaderURL,
-    options
-  )
+  await fetch(programLeaderURL, options)
     .then((response) => response.json())
     .then((data) => {
-      
       getResultElement.innerHTML = "";
 
       let newHTML = "";
 
       for (let i = 0; i < data.records.length; i++) {
-        let name = data.records[i].fields["Name"]
-        let occupation = data.records[i].fields["Occupation"]
-        let info = data.records[i].fields["SmallDescription"]
+        let name = data.records[i].fields["Name"];
+        let occupation = data.records[i].fields["Occupation"];
+        let info = data.records[i].fields["SmallDescription"];
         let pic = data.records[i].fields["Headshots"]?.[0]?.url || "";
 
         newHTML += `
@@ -90,9 +89,48 @@ async function getAllRecords() {
             </div>
           </div>
         `;
-
       }
       getResultElement.innerHTML = newHTML;
+    });
+}
+
+function autoScroll() {
+  const students = document.getElementById("js-students-name-tag");
+  students.style.scrollBehavior = "auto";
+  // const repeatLength = 5186.25;
+  const width = students.scrollWidth;
+  const dx = 1;
+  const dt = 20;
+  let interval;
+
+  const startScroll = () => {
+    scrolling = true;
+    interval = setInterval(() => {
+      students.scrollLeft += dx;
+      // console.log(students.scrollLeft);
+      // if (students.scrollLeft >= repeatLength) {
+      if (students.scrollLeft >= width / 2) {
+        clearInterval(interval);
+        students.scrollLeft = 0;
+        console.log("reset autoScroll");
+        setTimeout(startScroll, dt);
+      }
+    }, dt);
+  };
+
+  let scrolling = false;
+  startScroll();
+
+  students.addEventListener("click", () => {
+    if (scrolling) {
+      console.log("click stopped scrolling");
+      clearInterval(interval);
+      scrolling = false;
+    } else {
+      console.log("click started scrolling");
+      startScroll();
+    }
   });
 }
+
 getAllRecords();
